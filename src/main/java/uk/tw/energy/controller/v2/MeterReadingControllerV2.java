@@ -1,6 +1,9 @@
 package uk.tw.energy.controller.v2;
 
+import static uk.tw.energy.domain.constants.ApiConstants.READINGS_API_V2;
+
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +12,6 @@ import uk.tw.energy.domain.ElectricityReading;
 import uk.tw.energy.domain.MeterReadings;
 import uk.tw.energy.exceptions.RecordNotFoundException;
 import uk.tw.energy.service.MeterReadingService;
-
-import java.util.List;
-
-import static uk.tw.energy.domain.constants.ApiConstants.READINGS_API_V2;
 
 /**
  * @Author: srinivasun
@@ -38,8 +37,8 @@ public class MeterReadingControllerV2 {
      */
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public String storeMeterReadings(@PathVariable String smartMeterId,
-                                     @RequestBody @Valid MeterReadings meterReadings) {
+    public String storeMeterReadings(
+            @PathVariable String smartMeterId, @RequestBody @Valid MeterReadings meterReadings) {
         meterReadingService.storeReadings(smartMeterId, meterReadings.electricityReadings());
         return "STORED";
     }
@@ -52,12 +51,12 @@ public class MeterReadingControllerV2 {
      */
     @GetMapping
     public ResponseEntity<List<ElectricityReading>> findMeterReadings(@PathVariable String smartMeterId) {
-        List<ElectricityReading> readings = meterReadingService.getReadings(smartMeterId).orElseThrow(
-                () -> new RecordNotFoundException(smartMeterId));
+        List<ElectricityReading> readings = meterReadingService
+                .getReadings(smartMeterId)
+                .orElseThrow(() -> new RecordNotFoundException(smartMeterId));
         if (readings.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(readings);
     }
-
 }

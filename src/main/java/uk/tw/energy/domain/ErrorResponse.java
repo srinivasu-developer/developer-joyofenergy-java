@@ -1,7 +1,6 @@
 package uk.tw.energy.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -21,5 +20,4 @@ public record ErrorResponse(Instant time, List<ErrorMessage> errors, String mess
     }
 
     public record ErrorMessage(String fieldName, String message) {}
-
 }

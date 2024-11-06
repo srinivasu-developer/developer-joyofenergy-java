@@ -1,5 +1,7 @@
 package uk.tw.energy.handlers;
 
+import java.time.Instant;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -9,9 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import uk.tw.energy.domain.ErrorResponse;
 import uk.tw.energy.exceptions.RecordNotFoundException;
-
-import java.time.Instant;
-import java.util.List;
 
 /**
  * @Author: srinivasun
@@ -32,8 +31,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse validationExceptionHandler(MethodArgumentNotValidException argumentNotValidException) {
         log.info("Bad request");
-        List<ErrorResponse.ErrorMessage> errorMessages = argumentNotValidException.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> new ErrorResponse.ErrorMessage(fieldError.getField(), fieldError.getDefaultMessage())).toList();
+        List<ErrorResponse.ErrorMessage> errorMessages =
+                argumentNotValidException.getBindingResult().getFieldErrors().stream()
+                        .map(fieldError ->
+                                new ErrorResponse.ErrorMessage(fieldError.getField(), fieldError.getDefaultMessage()))
+                        .toList();
         return new ErrorResponse(Instant.now(), errorMessages);
     }
 
@@ -44,5 +46,4 @@ public class GlobalExceptionHandler {
 
         return new ErrorResponse(Instant.now(), "Record not found with ID: %s".formatted(exception.getRecordId()));
     }
-
 }
